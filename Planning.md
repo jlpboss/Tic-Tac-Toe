@@ -54,3 +54,20 @@ eg:
         (2darr[0][4] && 2darr[1][3] && 2darr[3][1]) || (2darr[1][3] && 2darr[3][1] && 2darr[4][0])
 
 6 return a or statement with each value
+
+
+
+# Visuals
+
+## Main Page
+
+2 buttons, one for TTT and one for C4, if you clikc the TTT it askes if you want to play one or two player, C4 will always be 2 player
+
+## TTT
+
+9 squre grid centered on the page with a drop shadow, red Xs and blue Os apear when you click each box
+
+## C4
+
+7x6 board of imgs of either wight red or yellow counded buttons. 
+Below eatch columm there will be a set of 7 buttons that are all the colour of the current player
