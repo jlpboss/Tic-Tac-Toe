@@ -29,7 +29,7 @@ eg:
 
 1 make a function that takes in a 2darr, R or Y, and a arr with 2 values that are the indecees of where the last move was played
 
-2 make a new 2darr of bools that is centered on the last move played. (7x7-)
+2 make a new 2darr of bools that is centered on the last move played. (7x7)
 
     2.a nested set of loops that check if last tplayed index minus step is lexx than zero or greater than 8 and then sets it to false otherwise moves to next step
 
