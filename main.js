@@ -86,15 +86,45 @@ let pageController = {
 
     TTTOWins: 0,
 
+    playSelectPage: function(){
+        this.currentGame = ""
+        this.updateGame()
+    },
+
     playTicTacToe: function(){
         this.currentGame = "TTT"
+        this.updateGame()
     },
     
     playConect4: function() {
         this.currentGame = "C4"
+        this.updateGame()
+    },
+
+    drawSelectPage: function(id, containerClass = "container", rowClass = "row", colClass = "col"){
+    renderer.clearPage("div1")
+    renderer.makeContainer(id, "div1", containerClass, rowClass, colClass)
+    renderer.makeTag("div", id + "Col1", id + "Row0", colClass)
+
+    renderer.drawText("Tic-Tac-Toe", id + "Col0")
+    renderer.drawText("Connect 4", id + "Col1")
+
+    renderer.makeEvent(id + "Col0", "click", "pageController.playTicTacToe", "()")
+    renderer.makeEvent(id + "Col1", "click", "pageController.playConect4", "()")
+    },
+
+    updateGame: function(){
+        if (this.currentGame === "TTT"){
+            TTTController.resetGame()
+        } else if (this.currentGame === "C4"){
+
+        }else {
+            this.drawSelectPage("page", "container", "row", "col menu text-center rounded");
+        }
     }
 
 };
+
 
 let TTTController = {
 
@@ -140,10 +170,11 @@ let TTTController = {
     },
 
     boxClicked: function(indexArr, XorO) {
-        this.boardState[indexArr[0]][indexArr[1]] = XorO;
-        renderer.clearPage("div1")
-        this.updateBoard()
-
+        if (this.boardState[indexArr[0]][indexArr[1]] == "") {
+            this.boardState[indexArr[0]][indexArr[1]] = XorO;
+            renderer.clearPage("div1")
+            this.updateBoard()
+        }
     },
 
     convertStrArrToBoolArr: function(twoDArr, XorO){
@@ -199,6 +230,9 @@ let TTTController = {
             renderer.drawTTTReset("TTTReset", "div1", "container", "row", "col TTT text-center rounded");
             TTTController.populateReset("Go Again?", "TTTReset");
             renderer.clickhandelTTTReset("TTTReset", "TTTController.resetGame");
+            renderer.drawTTTReset("gameReset", "div1", "container", "row", "col TTT text-center rounded");
+            TTTController.populateReset("Return to menu", "gameReset");
+            renderer.clickhandelTTTReset("gameReset", "pageController.playSelectPage");
 
         }else if(this.turnCount > 8){
             renderer.clearPage("div1");
@@ -231,4 +265,5 @@ let TTTController = {
 
 };
 
-TTTController.updateBoard()
+pageController.updateGame();
+//TTTController.updateBoard();
