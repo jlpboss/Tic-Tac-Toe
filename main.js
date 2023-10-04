@@ -66,20 +66,25 @@ let renderer = {
             this.makeEvent(boardId + "Col" + i, "click", "TTTController.boxClicked", "(["+ Math.floor(i/3) + ", " + i % 3 + "], " + "'" + turn + "'" + ")")
         }
     },
-    drawTTTHeadder: function(id, where, headTextarr, SubBoxTextArray, containerClass = "container", rowClass = "row", colClass = "col"){
+    drawTTTHeadder: function(id, where, containerClass = "container", rowClass = "row", colClass = "col"){
         this.makeContainer(id, where, containerClass, rowClass, colClass)
         this.makeTag("div", id + "Col1", id + "Row0", colClass)
         this.makeTag("div", id + "Col2", id + "Row0", colClass)
-
-        this.drawContentBox(id + "Box0", id + "Col0", headTextarr[0], )
-        this.drawContentBox()
-
+    },
+    drawTTTReset: function(id, where, containerClass = "container", rowClass = "row", colClass = "col"){
+        this.makeContainer(id, where, containerClass, rowClass, colClass)
+    },
+    clickhandelTTTReset: function(id, funct){
+        this.makeEvent(id + "Col0", "click", funct, "()")
     }
-};
-
+}
 let pageController = {
     
     currentGame: "",
+
+    TTTXWins: 0,
+
+    TTTOWins: 0,
 
     playTicTacToe: function(){
         this.currentGame = "TTT"
@@ -88,6 +93,7 @@ let pageController = {
     playConect4: function() {
         this.currentGame = "C4"
     }
+
 };
 
 let TTTController = {
@@ -111,8 +117,26 @@ let TTTController = {
             }
         }
     },
-    populateHeadder: function(){
+    populateHeadder: function(headderId, turntext, headderTextArr, headderSubTextArr){
+        
+        renderer.drawText(turntext, headderId + "Col1")
 
+        renderer.makeTag("div", headderId + "Col0Box0", headderId + "Col0", "row")
+        renderer.makeTag("div", headderId + "Col0Box0Col0", headderId + "Col0Box0", "col-12")
+        renderer.makeTag("div", headderId + "Col0Box0Col1", headderId + "Col0Box0", "col-12")
+
+        renderer.makeTag("div", headderId + "Col2Box1", headderId + "Col2", "row")
+        renderer.makeTag("div", headderId + "Col2Box1Col0", headderId + "Col2Box1", "col-12")
+        renderer.makeTag("div", headderId + "Col2Box1Col1", headderId + "Col2Box1", "col-12")
+        
+        renderer.drawText(headderTextArr[0], headderId + "Col0Box0Col0")
+        renderer.drawText(headderSubTextArr[0], headderId + "Col0Box0Col1")
+
+        renderer.drawText(headderTextArr[1], headderId + "Col2Box1Col0")
+        renderer.drawText(headderSubTextArr[1], headderId + "Col2Box1Col1")
+    },
+    populateReset: function(text, id){
+        renderer.drawText(text, id + "Col0")
     },
 
     boxClicked: function(indexArr, XorO) {
@@ -147,13 +171,45 @@ let TTTController = {
 
         return horazontal || vertical || diaganal
     },
+
+    resetGame: function() {
+        this.boardState = [
+            ["","",""],
+            ["","",""], 
+            ["","",""]
+            ];
+        this.turn = "o";
+        this.turnCount = 0;
+        this.updateBoard();
+    },
     
     updateBoard: function(){
-        if (TTTController.hasPlayerWon(TTTController.convertStrArrToBoolArr(TTTController.boardState, this.turn)) || this.turnCount > 8){
+        if (TTTController.hasPlayerWon(TTTController.convertStrArrToBoolArr(TTTController.boardState, this.turn))){
             renderer.clearPage("div1");
+            if (this.turn === "x"){
+                pageController.TTTXWins++;
+            }
+            else if (this.turn === "o"){
+                pageController.TTTOWins++;
+            }
+            renderer.drawTTTHeadder("headder", "div1", "container", "row", "col TTTHead text-center rounded")
+            this.populateHeadder("headder", this.turn.toUpperCase() + " Won!", ["X Wins: ", "O Wins: "], [pageController.TTTXWins, pageController.TTTOWins])
             renderer.drawTTTBoard("TTTBoard", "div1", "container", "row", "col TTT text-center rounded");
             TTTController.populateBoard(TTTController.boardState, "TTTBoard");
-        }else {
+            renderer.drawTTTReset("TTTReset", "div1", "container", "row", "col TTT text-center rounded");
+            TTTController.populateReset("Go Again?", "TTTReset");
+            renderer.clickhandelTTTReset("TTTReset", "TTTController.resetGame");
+
+        }else if(this.turnCount > 8){
+            renderer.clearPage("div1");
+            renderer.drawTTTHeadder("headder", "div1", "container", "row", "col TTTHead text-center rounded")
+            this.populateHeadder("headder", "Its a Draw!", ["X Wins: ", "O Wins: "], [pageController.TTTXWins, pageController.TTTOWins])
+            renderer.drawTTTBoard("TTTBoard", "div1", "container", "row", "col TTT text-center rounded");
+            TTTController.populateBoard(TTTController.boardState, "TTTBoard");
+            renderer.drawTTTReset("TTTReset", "div1", "container", "row", "col TTT text-center rounded");
+            TTTController.populateReset("Go Again?", "TTTReset");
+            renderer.clickhandelTTTReset("TTTReset", "TTTController.resetGame");
+        }else{
             if (this.turn === "x"){
                 this.turn = "o"
             }
@@ -163,8 +219,10 @@ let TTTController = {
             this.turnCount++;
 
             renderer.clearPage("div1");
+            renderer.drawTTTHeadder("headder", "div1", "container", "row", "col TTTHead text-center rounded")
+            this.populateHeadder("headder", "Its " + this.turn.toUpperCase() + "'s Turn", ["X Wins: ", "O Wins: "], [pageController.TTTXWins, pageController.TTTOWins])
             renderer.drawTTTBoard("TTTBoard", "div1", "container", "row", "col TTT text-center rounded");
-            TTTController.populateBoard(TTTController.boardState, "TTTBoard");
+            this.populateBoard(TTTController.boardState, "TTTBoard");
             renderer.clickhandelTTTBoard("TTTBoard", this.turn);
         }
     }
@@ -174,7 +232,3 @@ let TTTController = {
 };
 
 TTTController.updateBoard()
-
-console.log("X: " + TTTController.hasPlayerWon(TTTController.convertStrArrToBoolArr(TTTController.boardState, "x")))
-
-console.log("O: " + TTTController.hasPlayerWon(TTTController.convertStrArrToBoolArr(TTTController.boardState, "o")))
