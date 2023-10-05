@@ -1,0 +1,30 @@
+.menu{
+    background-color: rgb(50, 50, 50);
+    color: rgb(192, 192, 192);
+    font-size: 7vw;
+    padding: 10px;
+    margin: 10px;
+    height: 16vw;
+    box-shadow: 2px 2px 2px rgb(192, 192, 192);
+}
+.TTT{
+    background-color: rgb(50, 50, 50);
+    color: red;
+    font-size: 30px;
+    padding: 10px;
+    margin: 10px;
+    height: 65px;
+    box-shadow: 2px 2px 2px rgb(192, 192, 192);
+}
+.TTTHead{
+    background-color: rgb(50, 50, 50);
+    color: red;
+    font-size: 18px;
+    padding: 10px;
+    margin: 10px;
+    height: 65px;
+    box-shadow: 2px 2px 2px rgb(192, 192, 192);
+}
+body {
+    background-color: rgb(87, 87, 87);
+}
