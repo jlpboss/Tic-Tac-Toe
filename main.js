@@ -428,10 +428,10 @@ let C4Controller = {
     },
     drawPlayBoard: function() {
         if (this.turn === "r") {
-            this.drawHeadText("Its Red's Turn", ["X Wins: ", "O Wins: "], [pageController.TTTXWins, pageController.TTTOWins])
+            this.drawHeadText("Its Red's Turn", ["Red Wins: ", "Yellow Wins: "], [pageController.TTTXWins, pageController.TTTOWins])
         }
         else if (this.turn === "y") {
-            this.drawHeadText("Its Yellow's Turn", ["X Wins: ", "O Wins: "], [pageController.TTTXWins, pageController.TTTOWins])
+            this.drawHeadText("Its Yellow's Turn", ["Red Wins: ", "Yellow Wins: "], [pageController.TTTXWins, pageController.TTTOWins])
         }
         renderer.drawC4Board("board", "div1", "container C4Board", "row gx-3 gy-5", "col-1");
         this.populateBoard(this.boardState, "board")
