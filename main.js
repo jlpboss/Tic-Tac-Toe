@@ -415,14 +415,22 @@ let C4Controller = {
         renderer.drawTTTHeadder("headder", "div1", "container", "row", "col TTTHead text-center rounded")
         this.populateHeadder("headder", text, dipslayArrTop, dipslayArrBot)
     },
-        
+    populateReset: function (text, id) {
+        renderer.drawText(text, id + "Col0")
+    },
+    drawResteButton: function(){
+        renderer.drawTTTReset("C4Reset", "div1", "container", "row", "col TTT text-center rounded");
+        this.populateReset("Go Again?", "C4Reset");
+        renderer.clickhandelTTTReset("C4Reset", "C4Controller.resetGame");
+        renderer.drawTTTReset("gameReset", "div1", "container", "row", "col TTT text-center rounded");
+        this.populateReset("Return to Menu", "gameReset");
+        renderer.clickhandelTTTReset("gameReset", "pageController.playSelectPage");
+    },
     drawPlayBoard: function() {
         if (this.turn === "r") {
-            pageController.C4RWins++;
             this.drawHeadText("Its Red's Turn", ["X Wins: ", "O Wins: "], [pageController.TTTXWins, pageController.TTTOWins])
         }
         else if (this.turn === "y") {
-            pageController.C4YWins++;
             this.drawHeadText("Its Yellow's Turn", ["X Wins: ", "O Wins: "], [pageController.TTTXWins, pageController.TTTOWins])
         }
         renderer.drawC4Board("board", "div1", "container C4Board", "row gx-3 gy-5", "col-1");
@@ -433,19 +441,22 @@ let C4Controller = {
     drawPlayerhasWonBoard: function(){
         if (this.turn === "r") {
             pageController.C4RWins++;
-            //this.drawHeadText("Red Won!", ["X Wins: ", "O Wins: "],[pageController.C4RWins, pageController.C4YWins])
+            this.drawHeadText("Red Won!", ["X Wins: ", "O Wins: "],[pageController.C4RWins, pageController.C4YWins])
         }
         else if (this.turn === "y") {
             pageController.C4YWins++;
-            //this.drawHeadText("Yellow Won!", ["X Wins: ", "O Wins: "],[pageController.C4RWins, pageController.C4YWins])
+            this.drawHeadText("Yellow Won!", ["X Wins: ", "O Wins: "],[pageController.C4RWins, pageController.C4YWins])
         }
         
         renderer.drawC4Board("board", "div1", "container C4Board", "row gx-3 gy-5", "col-1");
         this.populateBoard(this.boardState, "board")
+        this.drawResteButton()
     },
     drawPlayersDrawBoard: function(){
+        this.drawHeadText("Its a Draw", ["X Wins: ", "O Wins: "],[pageController.C4RWins, pageController.C4YWins])
         renderer.drawC4Board("board", "div1", "container C4Board", "row gx-3 gy-5", "col-1");
         this.populateBoard(this.boardState, "board")
+        this.drawResteButton()
     },
     updateBoard: function(){
         
