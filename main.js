@@ -79,23 +79,32 @@ let renderer = {
     },
     makeC4Row: function (id, rowNum, colStart, rowClass = "row", colClass = "col") {
         this.makeTag("div", id + "Row" + rowNum, id + "Cont", rowClass)
+        this.makeTag("div", "", id + "Row" + rowNum, "col")
         for (i = 0; i < 7; i++) {
             this.makeTag("div", id + "Col" + (colStart + i), id + "Row" + rowNum, colClass)
         }
+        this.makeTag("div", "", id + "Row" + rowNum, "col")
     },
     drawC4Board: function (id, where, containerClass = "container", rowClass = "row", colClass = "col") {
-        this.makeContainer(id, where, containerClass, rowClass, colClass)
+        this.makeTag("div", id + "Cont", where, containerClass)
+        this.makeTag("div", id + "Row0", id + "Cont", rowClass)
+        this.makeTag("div", "", id + "Row0", "col")
+        this.makeTag("div", id + "Col0", id + "Row0", colClass)
         for (i = 1; i < 7; i++) {
             this.makeTag("div", id + "Col" + i, id + "Row0", colClass)
         }
+        this.makeTag("div", "", id + "Row0", "col")
         this.makeC4Row(id, 1, 7, rowClass, colClass)
         this.makeC4Row(id, 2, 14, rowClass, colClass)
         this.makeC4Row(id, 3, 21, rowClass, colClass)
         this.makeC4Row(id, 4, 28, rowClass, colClass)
         this.makeC4Row(id, 5, 35, rowClass, colClass)
+        this.makeC4Row(id, "B", 100, rowClass, colClass)
     },
-    drawC4Piece: function() {
-
+    clickhandelC4Buttons: function (boardId, RorY) {
+        for (i = 0; i < 7; i++) {
+            this.makeEvent(boardId + "Col" + (100+ i), "click", "C4Controller.dropClicked", "(" + i + ", " + "'" + RorY + "'" +")")
+        }
     },
 }
 let pageController = {
@@ -105,6 +114,10 @@ let pageController = {
     TTTXWins: 0,
 
     TTTOWins: 0,
+
+    C4RWins: 0,
+
+    C4YWins: 0,
 
     playSelectPage: function () {
         this.currentGame = ""
@@ -137,7 +150,7 @@ let pageController = {
         if (this.currentGame === "TTT") {
             TTTController.resetGame()
         } else if (this.currentGame === "C4") {
-
+            C4Controller.resetGame()
         } else {
             this.drawSelectPage("page", "container", "row", "col menu text-center rounded");
         }
@@ -295,10 +308,10 @@ let TTTController = {
 let C4Controller = {
     boardState: [
         ["", "", "", "", "", "", ""],
-        ["", "", "", "r", "y", "", ""],
-        ["", "", "r", "", "", "", ""],
-        ["", "r", "", "", "", "", ""],
-        ["r", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", ""],
         ["", "", "", "", "", "", ""]
     ],
 
@@ -306,12 +319,48 @@ let C4Controller = {
 
     lastMove: [0,0],
 
+    resetGame: function () {
+        this.boardState = [
+            ["", "", "", "", "", "", ""],
+            ["", "", "", "", "", "", ""],
+            ["", "", "", "", "", "", ""],
+            ["", "", "", "", "", "", ""],
+            ["", "", "", "", "", "", ""],
+            ["", "", "", "", "", "", ""]
+        ];
+        this.turn = "y";
+        this.lastMove = [0,0];
+        this.updateBoard();
+    },
+
     populateBoard: function (board, boardId) {
         let count = 0;
         for (let subarr of board) {
             for (let tile of subarr) {
                 renderer.makeTag("div", boardId + "Col" + count + "peice", boardId + "Col" + count, "C4Peice" + tile)
                 count++;
+            }
+        }
+    },
+    populateButtons: function (boardId) {
+            for (count = 0; count < 7; count++) {
+                renderer.makeTag("div", boardId + "Col" + (100 + count) + "Button", boardId + "Col" + (100 + count), "text-center C4Peice" + this.turn)
+                renderer.drawText("↓", boardId + "Col" + (100 + count) + "Button")
+            }
+    },
+    dropClicked: function(colIndex, RorY){
+        if (this.boardState[0][colIndex] == "") {
+            this.boardState[this.whereToDropPeice(colIndex)][colIndex] = RorY;
+            renderer.clearPage("div1")
+            this.updateBoard()
+        }
+    },
+    whereToDropPeice: function(colIndex){
+        for(index in this.boardState){
+            if ((this.boardState[Math.abs((index - 5) % 6)][colIndex]) === ""){
+                this.lastMove[0] = Math.abs((index - 5) % 6)
+                this.lastMove[1] = colIndex
+                return Math.abs((index - 5) % 6)
             }
         }
     },
@@ -344,12 +393,80 @@ let C4Controller = {
 
         return horazontal || vertical || diaganalL || diaganalR
     },
+    populateHeadder: function (headderId, turntext, headderTextArr, headderSubTextArr) {
+
+        renderer.drawText(turntext, headderId + "Col1")
+
+        renderer.makeTag("div", headderId + "Col0Box0", headderId + "Col0", "row")
+        renderer.makeTag("div", headderId + "Col0Box0Col0", headderId + "Col0Box0", "col-12")
+        renderer.makeTag("div", headderId + "Col0Box0Col1", headderId + "Col0Box0", "col-12")
+
+        renderer.makeTag("div", headderId + "Col2Box1", headderId + "Col2", "row")
+        renderer.makeTag("div", headderId + "Col2Box1Col0", headderId + "Col2Box1", "col-12")
+        renderer.makeTag("div", headderId + "Col2Box1Col1", headderId + "Col2Box1", "col-12")
+
+        renderer.drawText(headderTextArr[0], headderId + "Col0Box0Col0")
+        renderer.drawText(headderSubTextArr[0], headderId + "Col0Box0Col1")
+
+        renderer.drawText(headderTextArr[1], headderId + "Col2Box1Col0")
+        renderer.drawText(headderSubTextArr[1], headderId + "Col2Box1Col1")
+    },
+    drawHeadText: function(text, dipslayArrTop, dipslayArrBot) {
+        renderer.drawTTTHeadder("headder", "div1", "container", "row", "col TTTHead text-center rounded")
+        this.populateHeadder("headder", text, dipslayArrTop, dipslayArrBot)
+    },
+        
     drawPlayBoard: function() {
-        renderer.drawC4Board("board", "div1", "container C4Board", "row", "col");
+        if (this.turn === "r") {
+            pageController.C4RWins++;
+            this.drawHeadText("Its Red's Turn", ["X Wins: ", "O Wins: "], [pageController.TTTXWins, pageController.TTTOWins])
+        }
+        else if (this.turn === "y") {
+            pageController.C4YWins++;
+            this.drawHeadText("Its Yellow's Turn", ["X Wins: ", "O Wins: "], [pageController.TTTXWins, pageController.TTTOWins])
+        }
+        renderer.drawC4Board("board", "div1", "container C4Board", "row gx-3 gy-5", "col-1");
+        this.populateBoard(this.boardState, "board")
+        this.populateButtons("board")
+        renderer.clickhandelC4Buttons("board", this.turn)
+    },
+    drawPlayerhasWonBoard: function(){
+        if (this.turn === "r") {
+            pageController.C4RWins++;
+            //this.drawHeadText("Red Won!", ["X Wins: ", "O Wins: "],[pageController.C4RWins, pageController.C4YWins])
+        }
+        else if (this.turn === "y") {
+            pageController.C4YWins++;
+            //this.drawHeadText("Yellow Won!", ["X Wins: ", "O Wins: "],[pageController.C4RWins, pageController.C4YWins])
+        }
+        
+        renderer.drawC4Board("board", "div1", "container C4Board", "row gx-3 gy-5", "col-1");
         this.populateBoard(this.boardState, "board")
     },
+    drawPlayersDrawBoard: function(){
+        renderer.drawC4Board("board", "div1", "container C4Board", "row gx-3 gy-5", "col-1");
+        this.populateBoard(this.boardState, "board")
+    },
+    updateBoard: function(){
+        
+        renderer.clearPage("div1")
+
+        if (C4Controller.hasPlayerWon(C4Controller.convertStrArrToCenteredBoolArr(C4Controller.boardState, this.turn, this.lastMove))) {
+            this.drawPlayerhasWonBoard();
+        } else if (!(this.boardState[0].includes(""))) {
+            this.drawPlayersDrawBoard();
+        } else {
+            if (this.turn === "r") {
+                this.turn = "y"
+            }
+            else if (this.turn === "y") {
+                this.turn = "r"
+            }
+            this.drawPlayBoard();
+        }
+    }
 }
- console.log(C4Controller.hasPlayerWon(C4Controller.convertStrArrToCenteredBoolArr(C4Controller.boardState, "r", [3,1])))
- C4Controller.drawPlayBoard();
-// pageController.updateGame();
+//  console.log(C4Controller.hasPlayerWon(C4Controller.convertStrArrToCenteredBoolArr(C4Controller.boardState, "r", [3,1])))
+//   C4Controller.drawPlayBoard();
+pageController.updateGame();
 //TTTController.updateBoard();
