@@ -441,11 +441,11 @@ let C4Controller = {
     drawPlayerhasWonBoard: function(){
         if (this.turn === "r") {
             pageController.C4RWins++;
-            this.drawHeadText("Red Won!", ["X Wins: ", "O Wins: "],[pageController.C4RWins, pageController.C4YWins])
+            this.drawHeadText("Red Won!", ["Red Wins: ", "Yellow Wins: "],[pageController.C4RWins, pageController.C4YWins])
         }
         else if (this.turn === "y") {
             pageController.C4YWins++;
-            this.drawHeadText("Yellow Won!", ["X Wins: ", "O Wins: "],[pageController.C4RWins, pageController.C4YWins])
+            this.drawHeadText("Yellow Won!", ["Red Wins: ", "Yellow Wins: "],[pageController.C4RWins, pageController.C4YWins])
         }
         
         renderer.drawC4Board("board", "div1", "container C4Board", "row gx-3 gy-5", "col-1");
@@ -453,7 +453,7 @@ let C4Controller = {
         this.drawResteButton()
     },
     drawPlayersDrawBoard: function(){
-        this.drawHeadText("Its a Draw", ["X Wins: ", "O Wins: "],[pageController.C4RWins, pageController.C4YWins])
+        this.drawHeadText("Its a Draw", ["Red Wins: ", "Yellow Wins: "],[pageController.C4RWins, pageController.C4YWins])
         renderer.drawC4Board("board", "div1", "container C4Board", "row gx-3 gy-5", "col-1");
         this.populateBoard(this.boardState, "board")
         this.drawResteButton()
